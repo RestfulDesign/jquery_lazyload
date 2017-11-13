@@ -25,7 +25,7 @@
 
     "use strict";
 
-    const defaults = {
+    var defaults = {
         src: "data-src",
         srcset: "data-srcset",
         selector: ".lazyload"
@@ -38,7 +38,7 @@
     * @param {Object}   objects  The objects to merge together
     * @returns {Object}          Merged values of defaults and options
     */
-    const extend = function ()  {
+    var extend = function ()  {
 
         let extended = {};
         let deep = false;
@@ -90,19 +90,19 @@
                 return;
             }
 
-            let self = this;
-            let observerConfig = {
+            var self = this;
+            var observerConfig = {
                 root: null,
                 rootMargin: "0px",
                 threshold: [0]
             };
 
             this.observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function (entry) {
+                Array.prototype.forEach(entries, function (entry) {
                     if (entry.intersectionRatio > 0) {
                         self.observer.unobserve(entry.target);
-                        let src = entry.target.getAttribute(self.settings.src);
-                        let srcset = entry.target.getAttribute(self.settings.srcset);
+                        var src = entry.target.getAttribute(self.settings.src);
+                        var srcset = entry.target.getAttribute(self.settings.srcset);
                         if ("img" === entry.target.tagName.toLowerCase()) {
                             if (src) {
                                 entry.target.src = src;
@@ -117,7 +117,7 @@
                 });
             }, observerConfig);
 
-            this.images.forEach(function (image) {
+            Array.prototype.forEach(this.images, function (image) {
                 self.observer.observe(image);
             });
         },
@@ -131,11 +131,19 @@
         loadImages: function () {
             if (!this.settings) { return; }
 
-            let self = this;
-            this.images.forEach(function (image) {
-                let src = image.getAttribute(self.settings.src);
-                let srcset = image.getAttribute(self.settings.srcset);
+            var self = this;
+            Array.prototype.forEach.call(this.images, function (image) {
+                var src = image.getAttribute(self.settings.src);
+                var srcset = image.getAttribute(self.settings.srcset);
                 if ("img" === image.tagName.toLowerCase()) {
+                    image.addEventListener("error", function(e) {
+                        if(typeof self.error === "function" ){
+                            self.error(e, image);
+                        } else {
+                            image.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+                        }
+                    });
+                    
                     if (src) {
                         image.src = src;
                     }
@@ -160,7 +168,7 @@
     };
 
     if (root.jQuery) {
-        const $ = root.jQuery;
+        var $ = root.jQuery;
         $.fn.lazyload = function (options) {
             options = options || {};
             options.attribute = options.attribute || "data-src";
