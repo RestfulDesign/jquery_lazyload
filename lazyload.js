@@ -135,14 +135,7 @@
             Array.prototype.forEach.call(this.images, function (image) {
                 var src = image.getAttribute(self.settings.src);
                 var srcset = image.getAttribute(self.settings.srcset);
-                if ("img" === image.tagName.toLowerCase()) {
-                    image.addEventListener("error", function(e) {
-                        if(typeof self.error === "function" ){
-                            self.error(e, image);
-                        } else {
-                            image.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-                        }
-                    });
+                if ("img" === image.tagName.toLowerCase()) {                    
                     
                     if (src) {
                         image.src = src;
